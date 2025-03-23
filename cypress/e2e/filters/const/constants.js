@@ -1,0 +1,6 @@
+export const MAX_RECORD_COUNT_ON_PAGE = 20;
+export const DOCUMENT_TYPE_FIELD_INDEX = 1;
+export const DOCUMENT_NUMBER_FIELD_INDEX = 2;
+export const DOCUMENT_NAME_FIELD_INDEX = 3;
+export const DOCUMENT_DATE_FIELD_INDEX = 4;
+
