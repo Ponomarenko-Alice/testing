@@ -7,7 +7,7 @@ describe('Проверка работы фильтров', () => {
         cy.get('.reactable-th-foei\\:numbergsi > .btn-group > .form-control').as('documentNumberInput');
         cy.get('.reactable-th-foei\\:namegsi > .btn-group > .form-control').as('documentNameInput');
 
-        // cy.get('.reactable-data').as('recievedData');
+        cy.get('.reactable-data').as('recievedData');
         cy.get('.pull-left > :nth-child(1) > :nth-child(4)').as('pageCount');
         cy.get('.pull-left > :nth-child(1) > :nth-child(4)').as('totalRecordCount');
 
@@ -16,7 +16,7 @@ describe('Проверка работы фильтров', () => {
     });
 
     describe('Проверка фильтра “Вид документа”', () => {
-        it.skip('Фильтр применяется корректно', () => {
+        it('Фильтр применяется корректно', () => {
 
             cy.get('@documentTypeSelect').then(($select) => {
                 const optionCount = $select.find('option').length;
@@ -44,7 +44,7 @@ describe('Проверка работы фильтров', () => {
             cy.get(`.reactable-data > :nth-child(1) > :nth-child(${DOCUMENT_NUMBER_FIELD_INDEX}) > span`).as('firstRecordNumberDOMElement');
         });
 
-        it.skip('Поиск номера документа по существующему и полностью совпадающему работает корректно', () => {
+        it('Поиск номера документа по существующему и полностью совпадающему работает корректно', () => {
             cy.get('@firstRecordNumberDOMElement').then(($gsiNumber) => {
                 const gsiNumber = $gsiNumber.text();
                 cy.baseFindDocumentNumber(gsiNumber, gsiNumber);
@@ -53,7 +53,7 @@ describe('Проверка работы фильтров', () => {
             });
         })
 
-        it.skip('Поиск номера документа по существующему и полностью совпадающему с пробелами до и после названия работает корректно', () => {
+        it('Поиск номера документа по существующему и полностью совпадающему с пробелами до и после названия работает корректно', () => {
             cy.get('@firstRecordNumberDOMElement').then(($gsiNumber) => {
                 const gsiNumber = $gsiNumber.text();
                 cy.baseFindDocumentNumber(`\t ${gsiNumber} \t `, gsiNumber);
@@ -62,7 +62,7 @@ describe('Проверка работы фильтров', () => {
             });
         })
 
-        it.skip('Сброс фильтра работает корректно', () => {
+        it('Сброс фильтра работает корректно', () => {
             cy.get('@firstRecordNumberDOMElement').then(($gsiNumber) => {
                 const gsiNumber = $gsiNumber.text();
                 cy.baseFindDocumentNumber(gsiNumber, gsiNumber);
@@ -82,21 +82,21 @@ describe('Проверка работы фильтров', () => {
             cy.get(`.reactable-data > :nth-child(1) > :nth-child(${DOCUMENT_NAME_FIELD_INDEX}) > span`).as('firstRecordNameDOMElement');
         });
 
-        it.skip('Поиск наименования документа по существующему и полностью совпадающему работает корректно', () => {
+        it('Поиск наименования документа по существующему и полностью совпадающему работает корректно', () => {
             cy.get('@firstRecordNameDOMElement').then(($gsiName) => {
                 const gsiName = $gsiName.text();
                 cy.baseFindDocumentName(gsiName, gsiName);
             });
         })
 
-        it.skip('Поиск наименования документа по существующему и полностью совпадающему с пробелами до и после названия работает корректно', () => {
+        it('Поиск наименования документа по существующему и полностью совпадающему с пробелами до и после названия работает корректно', () => {
             cy.get('@firstRecordNameDOMElement').then(($gsiName) => {
                 const gsiName = $gsiName.text();
                 cy.baseFindDocumentName(`\t ${gsiName} \t `, gsiName);
             });
         })
 
-        it.skip('Сброс фильтра работает корректно', () => {
+        it('Сброс фильтра работает корректно', () => {
             cy.get('@firstRecordNameDOMElement').then(($gsiName) => {
                 const gsiName = $gsiName.text();
                 cy.baseFindDocumentName(gsiName, gsiName);
@@ -117,10 +117,11 @@ describe('Проверка работы фильтров', () => {
             const typedDate = new Date('2024-01-01').getTime();
 
             cy.intercept('GET', '**/fundmetrology/api/registry/3/data*').as('getData_documentDateFromInput');
-            
+
             cy.get(':nth-child(1) > .react-datepicker__input-container > .form-control').as('documentDateFromInput');
             cy.get('@documentDateFromInput').type('01.01.2024');
             cy.wait('@getData_documentDateFromInput');
+            cy.wait(500);
 
             cy.get('.reactable-data').then(($recievedData) => {
                 const recordCountOnPage = $recievedData.find('tr').length;
@@ -141,7 +142,7 @@ describe('Проверка работы фильтров', () => {
             })
         })
 
-        it('Проверка работы по дате введения документа ДО некоторой даты', () => {
+        it('Проверка работы фильтра по дате введения документа ДО некоторой даты', () => {
             const typedDate = new Date('2024-01-01').getTime();
 
             cy.get(':nth-child(3) > .react-datepicker__input-container > .form-control').as('documentDateToInput');
@@ -150,7 +151,7 @@ describe('Проверка работы фильтров', () => {
 
             cy.get('@documentDateToInput').type('01.01.2024');
             cy.wait('@getData_documentDateToInput');
-            cy.wait(4000);
+            cy.wait(500);
             cy.get('.reactable-data').then(($recievedData) => {
                 const recordCountOnPage = $recievedData.find('tr').length;
                 cy.log(`recordCountOnPage: ${recordCountOnPage}`);
@@ -170,17 +171,45 @@ describe('Проверка работы фильтров', () => {
             })
         })
 
-        // it('Сброс фильтра работает корректно', () => {
-        //     cy.get('@firstRecordNameDOMElement').then(($gsiName) => {
-        //         const gsiName = $gsiName.text();
-        //         cy.baseFindDocumentName(gsiName, gsiName);
 
-        //         cy.get('.reactable-th-foei\\:namegsi > div > span').click();
-        //         cy.get('@documentNameInput').should('be.empty');
-        //         cy.get('@recievedData').find('tr').should('have.length.above', 1);
 
-        //     });
-        // })
+        it('Проверка работы фильтра по дате введения документа одновременно ОТ и ДО некоторой даты', () => {
+            const typedDateFrom = new Date('2024-01-01').getTime();
+            const typedDateTo = new Date('2025-01-01').getTime();
+
+
+            cy.get(':nth-child(3) > .react-datepicker__input-container > .form-control').as('documentDateToInput');
+            cy.get(':nth-child(1) > .react-datepicker__input-container > .form-control').as('documentDateFromInput');
+
+
+            cy.intercept('GET', '**/fundmetrology/api/registry/3/data*').as('getData_documentDateToInput');
+
+
+            cy.get('@documentDateFromInput').type('01.01.2024');
+            cy.get('@documentDateToInput').type('01.01.2025');
+            cy.wait('@getData_documentDateToInput');
+            cy.wait(500);
+            cy.get('.reactable-data').then(($recievedData) => {
+                const recordCountOnPage = $recievedData.find('tr').length;
+                cy.log(`recordCountOnPage: ${recordCountOnPage}`);
+                for (let j = 1; j <= recordCountOnPage; j++) {
+                    cy.get(`.reactable-data > :nth-child(${j}) > :nth-child(${DOCUMENT_DATE_FIELD_INDEX}) > span`).then(($recordDate) => {
+                        const dateText = $recordDate.text().trim();
+
+                        // "DD.MM.YYYY" -> "YYYY-MM-DD"
+                        const [day, month, year] = dateText.split('.');
+                        const formattedDate = `${year}-${month}-${day}`;
+
+                        const date = new Date(formattedDate).getTime();
+
+                        cy.wrap(date).should('be.at.least', typedDateFrom); // date more than or equal to typedDate
+                        cy.wrap(date).should('be.at.most', typedDateTo); // date less than or equal to typedDate
+                    })
+                }
+            })
+        })
+
+
 
     });
 
